@@ -36,6 +36,7 @@ export default function VerifyFlow() {
   const [aadhaar, setAadhaar] = useState('')
   const [otp, setOtp] = useState('')
   const [masked, setMasked] = useState('')
+  const [demoOtp, setDemoOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
@@ -56,10 +57,11 @@ export default function VerifyFlow() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ aadhaar }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      setMasked(data.maskedAadhaar)
-      setStep(2)
+       const data = await res.json()
+       if (!res.ok) throw new Error(data.error)
+       setMasked(data.maskedAadhaar)
+       setDemoOtp(data.otp || '')
+       setStep(2)
     } catch (err) {
       setError(err.message || 'Failed to generate OTP.')
     } finally {
@@ -167,6 +169,13 @@ export default function VerifyFlow() {
             ) : (
               <motion.form key="otp" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }} transition={{ duration: 0.4, ease: EASE }} onSubmit={handleVerify} className="space-y-5">
                 <div className="rounded-2xl bg-neutral-50 px-4 py-3 text-center text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">OTP sent to your registered mobile number for <span className="font-semibold text-neutral-950 dark:text-neutral-50">{masked}</span></div>
+
+                {demoOtp && (
+                  <div className="rounded-2xl border border-dashed border-neutral-300 bg-white/60 px-4 py-3 text-center text-sm text-neutral-700 dark:border-white/20 dark:bg-white/5 dark:text-neutral-200">
+                    Demo OTP: <span className="font-mono text-base font-semibold tracking-[0.3em] text-neutral-950 dark:text-white">{demoOtp}</span>
+                    <p className="mt-1 text-[11px] text-neutral-400">A real deployment sends this via SMS — shown here for testing.</p>
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="otp">6-digit OTP</Label>

@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 export const dynamic = 'force-dynamic'
 
 export async function POST(req) {
@@ -8,7 +10,7 @@ export async function POST(req) {
     session = await getSession()
   } catch { }
   if (!session?.user) {
-    return Response.json({ error: 'Unauthorized. Please sign in first.' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized. Please sign in first.' }, { status: 401 })
   }
 
   const body = await req.json()
@@ -16,15 +18,27 @@ export async function POST(req) {
   const aadhaar = String(body.aadhaar ?? '').replace(/\s+/g, '')
 
   if (!/^\d{6}$/.test(otp)) {
-    return Response.json({ error: 'OTP must be a 6-digit number.' }, { status: 400 })
+    return NextResponse.json({ error: 'OTP must be a 6-digit number.' }, { status: 400 })
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 2000))
+  // Validate the OTP against the server-issued one (real verification).
+  const cookie = req.cookies.get('setu_otp')?.value
+  let valid = false
+  if (cookie) {
+    try {
+      const data = JSON.parse(Buffer.from(cookie, 'base64').toString())
+      if (data.a === aadhaar && data.o === otp && data.exp > Date.now()) valid = true
+    } catch { }
+  }
+  if (!valid) {
+    return NextResponse.json({ error: 'Invalid or expired OTP. Please request a new one.' }, { status: 400 })
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 1500))
 
   const aadhaarLastFour = aadhaar.slice(-4)
 
-  // Persist verification to the database when configured (Vercel Postgres /
-  // Neon / Supabase). Never fatal — the demo still works without a DB.
+  // Persist verification to the database when configured (graceful).
   try {
     const { getPrisma } = await import('@/lib/prisma')
     const p = getPrisma()
@@ -45,9 +59,11 @@ export async function POST(req) {
 
   await updateSession({ isAadhaarVerified: true, aadhaarLastFour })
 
-  return Response.json({
+  const res = NextResponse.json({
     success: true,
     message: 'Aadhaar verification successful.',
     aadhaarLastFour: aadhaarLastFour,
   })
+  res.cookies.set('setu_otp', '', { maxAge: 0 })
+  return res
 }

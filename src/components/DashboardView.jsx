@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { languageOptions, translations, issueTypes } from '@/lib/translations'
+import { INDIAN_STATES, DISTRICTS_BY_STATE } from '@/lib/india'
 
 const benefitData = {
   'sunita.verma@welfare.gov.in': { pds: { status: 'Active', lastCredit: '₹2,400', date: '12 Aug 2026', scheme: 'NFSA - Priority Household' }, dbt: { status: 'Active', lastCredit: '₹1,850', date: '10 Aug 2026', scheme: 'PM-KISAN' }, edu: { status: 'Verified', amount: '₹4,000', milestone: '85% attendance', scheme: 'Samagra Shiksha' }, health: { status: 'Completed', date: '05 Aug 2026', scheme: 'Ayushman Bharat' } },
@@ -212,12 +213,18 @@ function GrievancePortal({ user }) {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <Label htmlFor="district">{t.districts}</Label>
-              <Input id="district" type="text" autoComplete="off" placeholder={t.placeholderDistrict} value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value })} />
+              <Label htmlFor="state">{t.state}</Label>
+              <Select id="state" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value, district: '' })}>
+                <option value="">{t.placeholderState}</option>
+                {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </Select>
             </div>
             <div>
-              <Label htmlFor="state">{t.state}</Label>
-              <Input id="state" type="text" autoComplete="off" placeholder={t.placeholderState} value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
+              <Label htmlFor="district">{t.districts}</Label>
+              <Select id="district" value={form.district} disabled={!form.state} onChange={(e) => setForm({ ...form, district: e.target.value })}>
+                <option value="">{t.placeholderDistrict}</option>
+                {(DISTRICTS_BY_STATE[form.state] || []).map((d) => <option key={d} value={d}>{d}</option>)}
+              </Select>
             </div>
           </div>
 

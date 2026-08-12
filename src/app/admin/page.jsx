@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { SEED_GRIEVANCES } from '@/lib/grievances'
+import { INDIAN_STATES, DISTRICTS_BY_STATE } from '@/lib/india'
 
 const ADMIN_PASSWORD = 'SETU-ADMIN-2026'
 
@@ -129,14 +130,18 @@ function RegistrationForm({ onComplete }) {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="off-district">District</Label>
-                <Select id="off-district" value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value })}>
-                  {DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                <Label htmlFor="off-state">State</Label>
+                <Select id="off-state" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value, district: '' })}>
+                  <option value="">Select state</option>
+                  {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </Select>
               </div>
               <div>
-                <Label htmlFor="off-state">State</Label>
-                <Input id="off-state" placeholder="State" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
+                <Label htmlFor="off-district">District</Label>
+                <Select id="off-district" value={form.district} disabled={!form.state} onChange={(e) => setForm({ ...form, district: e.target.value })}>
+                  <option value="">Select district</option>
+                  {(DISTRICTS_BY_STATE[form.state] || []).map((d) => <option key={d} value={d}>{d}</option>)}
+                </Select>
               </div>
             </div>
             {err && <p role="alert" className="rounded-xl bg-red-500/10 px-4 py-2.5 text-xs font-medium text-red-600 dark:text-red-400">{err}</p>}
