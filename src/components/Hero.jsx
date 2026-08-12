@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Database, Fingerprint, ShieldCheck, TrendingUp } from 'lucide-react'
 import { EASE } from '@/lib/motion'
+import { useUi } from '@/lib/ui'
 
 const chips = [
   {
@@ -29,6 +30,7 @@ const chips = [
 ]
 
 export default function Hero() {
+  const { u } = useUi()
   return (
     <section
       id="top"
@@ -49,7 +51,7 @@ export default function Hero() {
           >
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-500 dark:text-neutral-400">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
-              Welfare Policy Implementation
+              {u('heroBadge')}
             </span>
           </motion.div>
 
@@ -60,10 +62,10 @@ export default function Hero() {
             style={{ opacity: 1, transform: 'none' }}
             className="text-balance mt-6 text-5xl font-bold leading-[1.02] tracking-tightest sm:text-6xl lg:text-8xl"
           >
-            Precision Governance.
+            {u('heroTitle1')}
             <br />
             <span className="bg-gradient-to-r from-neutral-950 via-neutral-600 to-neutral-400 bg-clip-text text-transparent">
-              Reimagined.
+              {u('heroTitle2')}
             </span>
           </motion.h1>
 
@@ -74,9 +76,7 @@ export default function Hero() {
             style={{ opacity: 1, transform: 'none' }}
             className="text-balance mx-auto mt-7 max-w-2xl text-lg font-normal leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-xl"
           >
-            A secure, citizen-first platform where real-time data, decentralized
-            identity, and direct transfers deliver welfare benefits to exactly the
-            right people.
+            {u('heroSubtitle')}
           </motion.p>
 
           <motion.div
@@ -91,7 +91,7 @@ export default function Hero() {
                 href="/login"
                 className="group inline-flex items-center gap-2.5 rounded-full bg-neutral-950 px-8 py-4 text-[15px] font-semibold text-white shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-colors duration-300 hover:bg-neutral-800"
               >
-                Access your dashboard
+                {u('heroCta')}
                 <ArrowRight
                   size={18}
                   aria-hidden="true"

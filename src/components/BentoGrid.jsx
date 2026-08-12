@@ -10,59 +10,55 @@ import {
   Users,
 } from 'lucide-react'
 import { fadeUp, stagger, EASE } from '@/lib/motion'
+import { useUi } from '@/lib/ui'
 
 const tiles = [
   {
     icon: Database,
-    title: 'Dynamic Socioeconomic Registries',
-    description:
-      'Continuous eligibility updates from tax, utility, and civil records — targeting that always reflects reality, never a stale census.',
+    titleKey: 'tileDynamicRegistries',
+    descKey: 'tileDynamicRegistriesDesc',
     span: 'sm:col-span-4',
     featured: true,
   },
   {
     icon: Fingerprint,
-    title: 'Decentralized Biometrics',
-    description:
-      'Secure, decentralized biometric IDs that stop identity fraud and double-dipping at the door.',
+    titleKey: 'tileBiometrics',
+    descKey: 'tileBiometricsDesc',
     span: 'sm:col-span-2',
     featured: false,
   },
   {
     icon: ArrowDownToLine,
-    title: 'Direct Benefit Transfers',
-    description:
-      'Cash and subsidies routed straight into verified citizen accounts — zero middlemen.',
+    titleKey: 'tileDbt',
+    descKey: 'tileDbtDesc',
     span: 'sm:col-span-2',
     featured: false,
   },
   {
     icon: GraduationCap,
-    title: 'Conditional Transfers',
-    description:
-      'Payouts tied to education and health milestones for measurable social outcomes.',
+    titleKey: 'tileConditional',
+    descKey: 'tileConditionalDesc',
     span: 'sm:col-span-2',
     featured: false,
   },
   {
     icon: Users,
-    title: 'Community Social Audits',
-    description:
-      'Public assemblies where citizens cross-examine spending against assets on the ground.',
+    titleKey: 'tileAudits',
+    descKey: 'tileAuditsDesc',
     span: 'sm:col-span-2',
     featured: false,
   },
   {
     icon: Bot,
-    title: 'Automated Exception Reports',
-    description:
-      'AI flags suspicious patterns — like a single phone number linked to multiple benefit accounts — for instant investigation.',
+    titleKey: 'tileAi',
+    descKey: 'tileAiDesc',
     span: 'sm:col-span-6',
     featured: false,
   },
 ]
 
 export default function BentoGrid() {
+  const { u } = useUi()
   return (
     <section id="features" className="scroll-mt-24 py-24 sm:py-32">
       <div className="section-shell">
@@ -76,21 +72,20 @@ export default function BentoGrid() {
           <motion.div variants={fadeUp}>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-500">
                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-neutral-950 dark:bg-white" />
-               Capabilities
+               {u('featuresBadge')}
             </span>
           </motion.div>
           <motion.h2
             variants={fadeUp}
             className="text-balance mt-5 text-4xl font-bold leading-tight tracking-tightest sm:text-5xl lg:text-6xl"
           >
-            Everything a modern welfare system needs.
+            {u('featuresTitle')}
           </motion.h2>
           <motion.p
             variants={fadeUp}
             className="text-balance mx-auto mt-5 max-w-xl text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-lg"
           >
-            One connected platform unifies identity, targeting, payments, and
-            accountability.
+            {u('featuresSubtitle')}
           </motion.p>
         </motion.div>
 
@@ -103,7 +98,7 @@ export default function BentoGrid() {
         >
           {tiles.map((tile) => (
             <motion.article
-              key={tile.title}
+              key={tile.titleKey}
               variants={fadeUp}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.35, ease: EASE }}
@@ -118,10 +113,10 @@ export default function BentoGrid() {
                   <tile.icon size={22} strokeWidth={1.75} />
                 </div>
                 <h3 className="mt-6 text-xl font-semibold tracking-tight sm:text-2xl">
-                  {tile.title}
+                  {u(tile.titleKey)}
                 </h3>
                 <p className="mt-3 max-w-md text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  {tile.description}
+                  {u(tile.descKey)}
                 </p>
               </div>
             </motion.article>

@@ -3,20 +3,20 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Globe, Landmark, Moon, Sun } from 'lucide-react'
+import { Landmark, Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
-import { useLanguage, languageOptions } from '@/lib/language'
-import { Select } from '@/components/ui/select'
+import { useUi } from '@/lib/ui'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 const links = [
-  { label: 'Features', href: '#features' },
-  { label: 'Oversight', href: '#oversight' },
+  { labelKey: 'navFeatures', href: '#features' },
+  { labelKey: 'navOversight', href: '#oversight' },
 ]
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { theme, toggleTheme } = useTheme()
-  const { lang, setLang } = useLanguage()
+  const { u } = useUi()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -51,25 +51,15 @@ export default function Navbar() {
                 href={item.href}
                 className="rounded-full px-4 py-2 text-sm font-medium text-neutral-600 transition-colors duration-300 hover:bg-neutral-950/[0.04] hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
               >
-                {item.label}
+                {u(item.labelKey)}
               </a>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-1.5 sm:flex">
-            <Globe size={15} className="text-neutral-400" aria-hidden="true" />
-            <Select
-              aria-label="Select language"
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="h-9 w-auto py-1 text-xs"
-            >
-              {languageOptions.map((o) => (
-                <option key={o.code} value={o.code}>{o.label}</option>
-              ))}
-            </Select>
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
           </div>
           <button
             type="button"
@@ -83,7 +73,7 @@ export default function Navbar() {
             href="/login"
             className="rounded-full bg-neutral-950 px-5 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-neutral-800 hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
-            Sign in
+            {u('navSignIn')}
           </Link>
         </div>
       </nav>

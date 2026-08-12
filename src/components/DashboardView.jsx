@@ -26,8 +26,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
-import { languageOptions, issueTypes } from '@/lib/translations'
+import { issueTypes } from '@/lib/translations'
 import { useLanguage } from '@/lib/language'
+import { useUi } from '@/lib/ui'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { INDIAN_STATES, DISTRICTS_BY_STATE } from '@/lib/india'
 
 const benefitData = {
@@ -56,36 +58,38 @@ function validateWelfareId(value) {
 }
 
 function WelcomeHeader({ user }) {
+  const { u } = useUi()
   const benefits = benefitData[user.email] || benefitData['sunita.verma@welfare.gov.in']
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }} className="flex flex-col gap-5 sm:flex-row sm:items-center">
       <div className="flex items-center gap-4">
         {user.image ? <img src={user.image} alt={user.name || 'Your profile'} className="h-14 w-14 rounded-2xl object-cover" referrerPolicy="no-referrer" /> : <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-200 text-lg font-semibold text-neutral-700 dark:bg-white/10 dark:text-neutral-100">{(user.name || '?').charAt(0)}</div>}
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400">Welcome</p>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{user.name || 'Citizen'}</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400">{u('dashWelcome')}</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{user.name || u('dashCitizen')}</h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">{user.email}</p>
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
         {user.isAadhaarVerified ? (
-          <Badge variant="success" className="px-3.5 py-1.5 text-sm"><BadgeCheck size={16} aria-hidden="true" /> Verification Status: Verified</Badge>
+          <Badge variant="success" className="px-3.5 py-1.5 text-sm"><BadgeCheck size={16} aria-hidden="true" /> {u('dashVerified')}</Badge>
         ) : (
           <>
-            <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><ShieldAlert size={16} aria-hidden="true" /> Verification Status: Pending</Badge>
+            <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><ShieldAlert size={16} aria-hidden="true" /> {u('dashPending')}</Badge>
             <Link href="/verify">
-              <Button variant="outline" size="sm">Verify Aadhaar</Button>
+              <Button variant="outline" size="sm">{u('dashVerifyAadhaar')}</Button>
             </Link>
           </>
         )}
-        {user.aadhaarLastFour && <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><Landmark size={15} aria-hidden="true" /> Aadhaar ····{user.aadhaarLastFour}</Badge>}
-        <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}><LogOut size={15} className="mr-1.5" aria-hidden="true" /> Sign out</Button>
+        {user.aadhaarLastFour && <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><Landmark size={15} aria-hidden="true" /> {u('dashAadhaar')} ····{user.aadhaarLastFour}</Badge>}
+        <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}><LogOut size={15} className="mr-1.5" aria-hidden="true" /> {u('dashSignOut')}</Button>
       </div>
     </motion.div>
   )
 }
 
 function BenefitCard({ title, icon: Icon, value, status, scheme, statusColor = 'success' }) {
+  const { u } = useUi()
   return (
     <Card className="border-neutral-100 shadow-card dark:border-white/10"><CardContent className="p-6">
       <div className="flex items-start justify-between">
@@ -104,7 +108,7 @@ function BenefitCard({ title, icon: Icon, value, status, scheme, statusColor = '
 }
 
 function GrievancePortal({ user }) {
-  const { lang, setLang, t } = useLanguage()
+  const { t } = useLanguage()
   const [form, setForm] = useState({ name: '', welfareId: '', issue: '', district: '', state: '' })
   const [coords, setCoords] = useState(null)
   const [locating, setLocating] = useState(false)
@@ -172,12 +176,7 @@ function GrievancePortal({ user }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Globe size={15} className="text-neutral-400" aria-hidden="true" />
-          <Select aria-label="Language" value={lang} onChange={(e) => setLang(e.target.value)} className="h-9 w-auto py-1 text-xs">
-            {languageOptions.map((o) => (
-              <option key={o.code} value={o.code}>{o.label}</option>
-            ))}
-          </Select>
+          <LanguageSwitcher />
         </div>
       </div>
     </CardHeader>
@@ -263,10 +262,10 @@ function BenefitSummary({ user }) {
   const data = benefitData[user.email] || benefitData['sunita.verma@welfare.gov.in']
   return (
     <>
-      <BenefitCard title="Food Subsidy (PDS)" icon={Users} value={data.pds.lastCredit} status={data.pds.status} scheme={`${data.pds.scheme} · Last: ${data.pds.date}`} statusColor={data.pds.status === 'Active' ? 'success' : 'secondary'} />
-      <BenefitCard title="Direct Benefit Transfer" icon={Wallet} value={data.dbt.lastCredit} status={data.dbt.status} scheme={`${data.dbt.scheme} · Last: ${data.dbt.date}`} statusColor={data.dbt.status === 'Active' ? 'success' : 'secondary'} />
-      <BenefitCard title="Education Grant" icon={FileText} value={data.edu.amount} status={data.edu.status} scheme={`${data.edu.scheme} · ${data.edu.milestone}`} statusColor={data.edu.status === 'Verified' ? 'success' : 'secondary'} />
-      <BenefitCard title="Health Coverage" icon={ShieldAlert} value={data.health.date === '—' ? 'Not enrolled' : 'Active'} status={data.health.status} scheme={`${data.health.scheme} · Last: ${data.health.date}`} statusColor={data.health.status === 'Completed' || data.health.status === 'Active' ? 'success' : 'secondary'} />
+      <BenefitCard title={u('dashFoodSubsidy')} icon={Users} value={data.pds.lastCredit} status={data.pds.status} scheme={`${data.pds.scheme} · Last: ${data.pds.date}`} statusColor={data.pds.status === 'Active' ? 'success' : 'secondary'} />
+      <BenefitCard title={u('dashDbt')} icon={Wallet} value={data.dbt.lastCredit} status={data.dbt.status} scheme={`${data.dbt.scheme} · Last: ${data.dbt.date}`} statusColor={data.dbt.status === 'Active' ? 'success' : 'secondary'} />
+      <BenefitCard title={u('dashEducation')} icon={FileText} value={data.edu.amount} status={data.edu.status} scheme={`${data.edu.scheme} · ${data.edu.milestone}`} statusColor={data.edu.status === 'Verified' ? 'success' : 'secondary'} />
+      <BenefitCard title={u('dashHealth')} icon={ShieldAlert} value={data.health.date === '—' ? u('dashNotEnrolled') : 'Active'} status={data.health.status} scheme={`${data.health.scheme} · Last: ${data.health.date}`} statusColor={data.health.status === 'Completed' || data.health.status === 'Active' ? 'success' : 'secondary'} />
     </>
   )
 }
@@ -282,9 +281,9 @@ export default function DashboardView() {
         <div className="flex flex-col gap-5">
           <BenefitSummary user={user} />
           <Card className="border-neutral-100 bg-neutral-950 text-white shadow-card dark:border-white/10"><CardContent className="p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">Next Social Audit</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">{u('dashNextSocialAudit')}</p>
             <p className="mt-2 text-2xl font-bold tracking-tight">Grama Sabha · 28 Aug 2026</p>
-            <p className="mt-1 text-sm text-white/50">Your village's public spending review — open to all residents.</p>
+            <p className="mt-1 text-sm text-white/50">{u('dashSocialAuditDesc')}</p>
           </CardContent></Card>
         </div>
       </motion.div>

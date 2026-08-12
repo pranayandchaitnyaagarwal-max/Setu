@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import LoginForm from '@/components/LoginForm'
+import T from '@/components/T'
 
 export default async function LoginPage() {
   const googleEnabled = Boolean(
@@ -17,12 +18,12 @@ export default async function LoginPage() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </div>
-          <h1 className="text-balance text-3xl font-bold tracking-tightest sm:text-4xl">Welcome back</h1>
-           <p className="mt-3 text-balance text-base text-neutral-500 dark:text-neutral-400">Sign in to access your secure citizen dashboard. New citizens are onboarded in under two minutes.</p>
+          <h1 className="text-balance text-3xl font-bold tracking-tightest sm:text-4xl"><T k="loginTitle" /></h1>
+           <p className="mt-3 text-balance text-base text-neutral-500 dark:text-neutral-400"><T k="loginSubtitle" /></p>
         </div>
         <Card className="border-neutral-100 shadow-card dark:border-white/10">
           <CardHeader>
-            <CardTitle>Continue with Google</CardTitle>
+            <CardTitle><T k="loginContinueGoogle" /></CardTitle>
             <CardDescription>Your welfare records stay private on a verified infrastructure.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

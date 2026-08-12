@@ -3,35 +3,33 @@
 import { motion } from 'framer-motion'
 import { BarChart3, Database, FileText, Scale } from 'lucide-react'
 import { fadeUp, stagger, EASE } from '@/lib/motion'
+import { useUi } from '@/lib/ui'
 
 const pillars = [
   {
     icon: FileText,
-    title: 'Mandatory Audit Guidelines',
-    description:
-      'Standard operating procedures and legal frameworks that make social and financial audits mandatory.',
+    titleKey: 'pillarAudit',
+    descKey: 'pillarAuditDesc',
   },
   {
     icon: BarChart3,
-    title: 'Clear Performance Metrics',
-    description:
-      'Measurable benchmarks — like specific reduction rates in stunting or unemployment.',
+    titleKey: 'pillarMetrics',
+    descKey: 'pillarMetricsDesc',
   },
   {
     icon: Scale,
-    title: 'Independent Bodies',
-    description:
-      'Legal safeguards for third-party auditors and local social audit units against political interference.',
+    titleKey: 'pillarBodies',
+    descKey: 'pillarBodiesDesc',
   },
   {
     icon: Database,
-    title: 'Secure Master Databases',
-    description:
-      'Central beneficiary registries with clean data, accessible only to authorized audit agencies.',
+    titleKey: 'pillarDatabases',
+    descKey: 'pillarDatabasesDesc',
   },
 ]
 
 export default function Oversight() {
+  const { u } = useUi()
   return (
     <section
       id="oversight"
@@ -53,22 +51,20 @@ export default function Oversight() {
           <motion.div variants={fadeUp}>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/60">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-white" />
-              Ministry Oversight
+              {u('oversightBadge')}
             </span>
           </motion.div>
           <motion.h2
             variants={fadeUp}
             className="text-balance mt-5 text-4xl font-bold leading-tight tracking-tightest sm:text-5xl lg:text-6xl"
           >
-            Ministry Framework &amp; Infrastructure
+            {u('oversightTitle')}
           </motion.h2>
           <motion.p
             variants={fadeUp}
             className="text-balance mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg"
           >
-            Ministries oversee welfare policy audits by establishing legal
-            frameworks, allocating oversight budgets, maintaining secure data
-            systems, and enforcing penalties.
+            {u('oversightSubtitle')}
           </motion.p>
         </motion.div>
 
@@ -81,7 +77,7 @@ export default function Oversight() {
         >
           {pillars.map((p) => (
             <motion.article
-              key={p.title}
+              key={p.titleKey}
               variants={fadeUp}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.35, ease: EASE }}
@@ -96,10 +92,10 @@ export default function Oversight() {
                   <p.icon size={22} strokeWidth={1.75} />
                 </div>
                 <h3 className="mt-6 text-2xl font-semibold tracking-tight">
-                  {p.title}
+                  {u(p.titleKey)}
                 </h3>
                 <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/55">
-                  {p.description}
+                  {u(p.descKey)}
                 </p>
               </div>
             </motion.article>

@@ -1,6 +1,10 @@
+'use client'
+
 import { Landmark } from 'lucide-react'
+import { useUi } from '@/lib/ui'
 
 export default function Footer() {
+  const { u } = useUi()
   return (
     <footer className="border-t border-white/10 bg-neutral-950 pb-10 pt-12 text-center">
       <div className="mx-auto max-w-content px-6">
@@ -11,10 +15,10 @@ export default function Footer() {
           <Landmark size={18} />
         </div>
         <p className="text-sm font-medium text-white/80">
-          Precision governance for people-first policy.
+          {u('footerTagline')}
         </p>
         <p className="mt-2 text-xs text-white/40">
-          Dynamic registries · Decentralized biometrics · Direct benefit transfers
+          {u('footerSub')}
         </p>
         <p className="mt-6 text-xs text-white/30">
           © {new Date().getFullYear()} SETU. Built for public good.

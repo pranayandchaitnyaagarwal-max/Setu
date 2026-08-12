@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useUi } from '@/lib/ui'
 
 function GoogleIcon({ size = 18, className }) {
   return (
@@ -27,6 +28,7 @@ const mockUsers = [
 
 export default function LoginForm({ googleEnabled = false }) {
   const [loading, setLoading] = useState(false)
+  const { u } = useUi()
   const [mode, setMode] = useState(googleEnabled ? 'google' : 'mock')
   const [form, setForm] = useState({
     email: mockUsers[0].email,
@@ -74,9 +76,9 @@ export default function LoginForm({ googleEnabled = false }) {
           disabled={loading}
           className="flex-1"
         >
-          <User className="mr-2 h-4 w-4" aria-hidden="true" />
-          Demo Account
-        </Button>
+            <User className="mr-2 h-4 w-4" aria-hidden="true" />
+            {u('loginDemoHint')}
+          </Button>
       </div>
 
       {mode === 'mock' && (
@@ -84,7 +86,7 @@ export default function LoginForm({ googleEnabled = false }) {
           <CardContent className="space-y-4 pt-0">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <Label htmlFor="mock-email">Email</Label>
+                <Label htmlFor="mock-email">{u('loginEmail')}</Label>
                 <Input
                   id="mock-email"
                   type="email"
@@ -94,7 +96,7 @@ export default function LoginForm({ googleEnabled = false }) {
                 />
               </div>
               <div>
-                <Label htmlFor="mock-name">Name</Label>
+                <Label htmlFor="mock-name">{u('loginName')}</Label>
                 <Input
                   id="mock-name"
                   type="text"
@@ -105,7 +107,7 @@ export default function LoginForm({ googleEnabled = false }) {
               </div>
             </div>
             <div>
-              <Label htmlFor="mock-image">Profile Image (optional)</Label>
+                <Label htmlFor="mock-image">{u('loginImage')}</Label>
               <Input
                 id="mock-image"
                 type="url"
@@ -116,7 +118,7 @@ export default function LoginForm({ googleEnabled = false }) {
             </div>
 
             <div className="rounded-xl bg-neutral-100 p-3 text-xs text-neutral-600 dark:bg-white/10 dark:text-neutral-300">
-              <strong>Quick pick:</strong>{' '}
+              <strong>{u('loginPresetLabel')}</strong>{' '}
               <select
                 onChange={(e) => {
                   const u = mockUsers.find((m) => m.email === e.target.value)
@@ -147,7 +149,7 @@ export default function LoginForm({ googleEnabled = false }) {
                   Signing in…
                 </>
               ) : (
-                'Continue with Demo Account'
+                u('loginContinueDemo')
               )}
             </Button>
           </CardContent>
