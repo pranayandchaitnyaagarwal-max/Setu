@@ -21,7 +21,7 @@ function GoogleIcon({ size = 18, className }) {
 }
 
 const mockUsers = [
-  { email: 'sunita.verma@welfare.gov.in', name: 'Sunita Verma', image: 'https://i.pravatar.cc/150?u=sunita.verma@welfare.gov.in', verified: true },
+  { email: 'shockwavecrimson@gmail.com', name: 'Sunita Verma', image: 'https://i.pravatar.cc/150?u=sunita.verma@welfare.gov.in', verified: true },
   { email: 'aarav.nair@welfare.gov.in', name: 'Aarav Nair', image: 'https://i.pravatar.cc/150?u=aarav.nair@welfare.gov.in', verified: true },
   { email: 'meena.devi@welfare.gov.in', name: 'Meena Devi', image: 'https://i.pravatar.cc/150?u=meena.devi@welfare.gov.in', verified: false },
 ]
