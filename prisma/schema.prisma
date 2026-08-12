@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(cuid())
+  email             String      @unique
+  name              String?
+  image             String?
+  isAadhaarVerified Boolean     @default(false)
+  aadhaarLastFour   String?
+  grievances        Grievance[]
+  createdAt         DateTime    @default(now())
+}
+
+model Grievance {
+  id         String   @id @default(cuid())
+  trackingId String   @unique
+  name       String
+  welfareId  String
+  issue      String
+  category   String
+  district   String
+  state      String
+  lat        String?
+  lng        String?
+  status     String   @default("Pending")
+  resolution String?
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Official {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String
+  position  String
+  district  String
+  state     String
+  createdAt DateTime @default(now())
+}

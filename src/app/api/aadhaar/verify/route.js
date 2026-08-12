@@ -23,8 +23,26 @@ export async function POST(req) {
 
   const aadhaarLastFour = aadhaar.slice(-4)
 
-  // Demo mode: verification is stateless. The client refreshes the JWT
-  // session via useSession().update() so the dashboard reflects the change.
+  // Persist verification to the database when configured (Vercel Postgres /
+  // Neon / Supabase). Never fatal — the demo still works without a DB.
+  try {
+    const { getPrisma } = await import('@/lib/prisma')
+    const p = getPrisma()
+    if (p && session.user.email) {
+      await p.user.upsert({
+        where: { email: session.user.email },
+        update: { isAadhaarVerified: true, aadhaarLastFour },
+        create: {
+          email: session.user.email,
+          name: session.user.name || 'Citizen User',
+          image: session.user.image || null,
+          isAadhaarVerified: true,
+          aadhaarLastFour,
+        },
+      })
+    }
+  } catch { }
+
   await updateSession({ isAadhaarVerified: true, aadhaarLastFour })
 
   return Response.json({

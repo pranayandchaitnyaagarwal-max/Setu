@@ -132,9 +132,26 @@ function GrievancePortal({ user }) {
       return
     }
     setSubmitting(true)
-    await new Promise((r) => setTimeout(r, 800))
-    setTrackingId(`#G-${Math.floor(10000 + Math.random() * 90000)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`)
+    let id = `#G-${Math.floor(10000 + Math.random() * 90000)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`
+    try {
+      const res = await fetch('/api/grievances', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          welfareId: form.welfareId,
+          issue: form.issue,
+          district: form.district,
+          state: form.state,
+          lat: coords?.lat,
+          lng: coords?.lng,
+        }),
+      })
+      const data = await res.json()
+      if (data.trackingId) id = data.trackingId
+    } catch { }
     setSubmitting(false)
+    setTrackingId(id)
   }
 
   return (

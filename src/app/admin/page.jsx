@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { SEED_GRIEVANCES } from '@/lib/grievances'
 
 const ADMIN_PASSWORD = 'SETU-ADMIN-2026'
 
@@ -34,25 +35,7 @@ const POSITIONS = [
 const DISTRICTS = ['Pune', 'Nashik', 'Nagpur', 'Aurangabad', 'Kolhapur', 'Solapur']
 const CATEGORIES = ['Biometric Failure', 'Wrongful Exclusion', 'Wage Delay', 'Benefit Not Received']
 
-// Deterministic mock grievance dataset for the oversight dashboard.
-const GRIEVANCES = [
-  { id: '#G-8492A', district: 'Pune', category: 'Biometric Failure', status: 'Resolved', citizen: 'Sunita Verma', date: '02 Aug 2026' },
-  { id: '#G-7215B', district: 'Pune', category: 'Wage Delay', status: 'Resolved', citizen: 'A. Kale', date: '15 Jul 2026' },
-  { id: '#G-6103C', district: 'Nashik', category: 'Wrongful Exclusion', status: 'Under Review', citizen: 'R. Patil', date: '28 Jul 2026' },
-  { id: '#G-5521D', district: 'Nashik', category: 'Biometric Failure', status: 'Pending', citizen: 'M. Devi', date: '20 Jul 2026' },
-  { id: '#G-4410E', district: 'Nagpur', category: 'Benefit Not Received', status: 'Resolved', citizen: 'S. Kumar', date: '11 Jul 2026' },
-  { id: '#G-3392F', district: 'Nagpur', category: 'Wage Delay', status: 'Under Review', citizen: 'K. Rao', date: '30 Jul 2026' },
-  { id: '#G-2281G', district: 'Aurangabad', category: 'Wrongful Exclusion', status: 'Resolved', citizen: 'P. Shinde', date: '05 Jul 2026' },
-  { id: '#G-1170H', district: 'Aurangabad', category: 'Biometric Failure', status: 'Rejected', citizen: 'V. Jadhav', date: '18 Jun 2026' },
-  { id: '#G-9059I', district: 'Kolhapur', category: 'Wage Delay', status: 'Pending', citizen: 'N. Patil', date: '22 Jul 2026' },
-  { id: '#G-8048J', district: 'Kolhapur', category: 'Benefit Not Received', status: 'Under Review', citizen: 'D. More', date: '26 Jul 2026' },
-  { id: '#G-7037K', district: 'Solapur', category: 'Wrongful Exclusion', status: 'Resolved', citizen: 'B. Deshmukh', date: '09 Jul 2026' },
-  { id: '#G-6026L', district: 'Solapur', category: 'Biometric Failure', status: 'Pending', citizen: 'G. Gaikwad', date: '31 Jul 2026' },
-  { id: '#G-5015M', district: 'Pune', category: 'Wrongful Exclusion', status: 'Resolved', citizen: 'T. Nair', date: '12 Jul 2026' },
-  { id: '#G-4004N', district: 'Nashik', category: 'Benefit Not Received', status: 'Resolved', citizen: 'L. Sahu', date: '14 Jul 2026' },
-  { id: '#G-3093O', district: 'Nagpur', category: 'Wrongful Exclusion', status: 'Under Review', citizen: 'H. Meshram', date: '29 Jul 2026' },
-]
-
+// Grievances are loaded from /api/grievances (database + seed). See below.
 const STATUS_COLORS = {
   Resolved: '#22c55e',
   'Under Review': '#f59e0b',
@@ -258,7 +241,18 @@ function AiSummary({ grievances }) {
 function Dashboard({ official }) {
   const scoped = ['District Magistrate', 'Block Development Officer', 'Panchayat Secretary'].includes(official.position)
   const [district, setDistrict] = useState(scoped ? official.district : 'All')
-  const visible = district === 'All' ? GRIEVANCES : GRIEVANCES.filter((g) => g.district === district)
+  const [grievances, setGrievances] = useState(SEED_GRIEVANCES)
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/grievances')
+      .then((r) => r.json())
+      .then((d) => { if (active && d.grievances) setGrievances(d.grievances) })
+      .catch(() => {})
+    return () => { active = false }
+  }, [])
+
+  const visible = district === 'All' ? grievances : grievances.filter((g) => g.district === district)
 
   const statusData = ['Resolved', 'Under Review', 'Pending', 'Rejected'].map((s) => ({
     label: s,
@@ -269,8 +263,8 @@ function Dashboard({ official }) {
 
   const districtCounts = DISTRICTS.map((d) => ({
     district: d,
-    total: GRIEVANCES.filter((g) => g.district === d).length,
-    open: GRIEVANCES.filter((g) => g.district === d && g.status !== 'Resolved').length,
+    total: grievances.filter((g) => g.district === d).length,
+    open: grievances.filter((g) => g.district === d && g.status !== 'Resolved').length,
   }))
 
   return (
@@ -340,9 +334,9 @@ function Dashboard({ official }) {
         <CardContent className="p-0">
           <div className="divide-y divide-neutral-100 dark:divide-white/10">
             {visible.slice(0, 8).map((g) => (
-              <div key={g.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
-                <span className="font-mono text-xs text-neutral-400">{g.id}</span>
-                <span className="text-sm font-medium">{g.citizen}</span>
+              <div key={g.trackingId} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
+                <span className="font-mono text-xs text-neutral-400">{g.trackingId}</span>
+                <span className="text-sm font-medium">{g.name}</span>
                 <Badge variant="outline" className="text-[11px]">{g.category}</Badge>
                 <span className="text-xs text-neutral-500 dark:text-neutral-400">{g.district}</span>
                 <Badge

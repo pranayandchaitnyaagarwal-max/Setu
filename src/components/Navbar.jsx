@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Landmark, Moon, Sun, ShieldCheck } from 'lucide-react'
+import { Landmark, Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
 
 const links = [
@@ -52,14 +52,6 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-          <li>
-            <Link
-              href="/admin"
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-neutral-600 transition-colors duration-300 hover:bg-neutral-950/[0.04] hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
-            >
-              <ShieldCheck size={15} aria-hidden="true" /> Admin
-            </Link>
-          </li>
         </ul>
 
         <div className="flex items-center gap-2">

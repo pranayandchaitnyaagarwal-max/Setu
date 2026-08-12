@@ -41,14 +41,33 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.email) return null
         const known = demoUsers.find((u) => u.email === credentials.email)
-        return {
-          id: known ? known.email : 'mock-user-' + credentials.email,
+        const baseUser = {
           email: credentials.email,
           name: (credentials.name || known?.name || 'Citizen User').trim() || 'Citizen User',
           image: credentials.image || known?.image || `https://i.pravatar.cc/150?u=${credentials.email}`,
           isAadhaarVerified: known?.isAadhaarVerified ?? false,
           aadhaarLastFour: known?.aadhaarLastFour ?? null,
         }
+        // Persist (or fetch) the user record so grievances can be linked.
+        try {
+          const { getPrisma } = await import('@/lib/prisma')
+          const p = getPrisma()
+          if (p) {
+            const record = await p.user.upsert({
+              where: { email: baseUser.email },
+              update: {},
+              create: {
+                email: baseUser.email,
+                name: baseUser.name,
+                image: baseUser.image,
+                isAadhaarVerified: baseUser.isAadhaarVerified,
+                aadhaarLastFour: baseUser.aadhaarLastFour,
+              },
+            })
+            return { id: record.id, ...baseUser }
+          }
+        } catch { }
+        return { id: known ? known.email : 'mock-user-' + credentials.email, ...baseUser }
       },
     }),
   ],
