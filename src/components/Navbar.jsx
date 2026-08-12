@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Landmark, Moon, Sun } from 'lucide-react'
+import { Globe, Landmark, Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
+import { useLanguage, languageOptions } from '@/lib/language'
+import { Select } from '@/components/ui/select'
 
 const links = [
   { label: 'Features', href: '#features' },
@@ -14,6 +16,7 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { theme, toggleTheme } = useTheme()
+  const { lang, setLang } = useLanguage()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -55,6 +58,19 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-1.5 sm:flex">
+            <Globe size={15} className="text-neutral-400" aria-hidden="true" />
+            <Select
+              aria-label="Select language"
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+              className="h-9 w-auto py-1 text-xs"
+            >
+              {languageOptions.map((o) => (
+                <option key={o.code} value={o.code}>{o.label}</option>
+              ))}
+            </Select>
+          </div>
           <button
             type="button"
             onClick={toggleTheme}

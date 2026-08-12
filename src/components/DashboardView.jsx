@@ -26,7 +26,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
-import { languageOptions, translations, issueTypes } from '@/lib/translations'
+import { languageOptions, issueTypes } from '@/lib/translations'
+import { useLanguage } from '@/lib/language'
 import { INDIAN_STATES, DISTRICTS_BY_STATE } from '@/lib/india'
 
 const benefitData = {
@@ -103,8 +104,7 @@ function BenefitCard({ title, icon: Icon, value, status, scheme, statusColor = '
 }
 
 function GrievancePortal({ user }) {
-  const [lang, setLang] = useState('en')
-  const t = translations[lang]
+  const { lang, setLang, t } = useLanguage()
   const [form, setForm] = useState({ name: '', welfareId: '', issue: '', district: '', state: '' })
   const [coords, setCoords] = useState(null)
   const [locating, setLocating] = useState(false)
