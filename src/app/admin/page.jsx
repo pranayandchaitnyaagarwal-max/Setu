@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
-  Landmark,
   LayoutDashboard,
   Lock,
   MapPin,
@@ -381,9 +380,6 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen pb-24">
-      <Link href="/" className="fixed left-6 top-6 z-50 flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-950 text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950">
-        <Landmark size={18} aria-hidden="true" />
-      </Link>
       {!authed ? (
         <PasswordGate onSuccess={() => { sessionStorage.setItem('setu-admin', '1'); setAuthed(true) }} />
       ) : !official ? (

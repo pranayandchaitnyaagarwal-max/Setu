@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
@@ -69,7 +70,12 @@ function WelcomeHeader({ user }) {
         {user.isAadhaarVerified ? (
           <Badge variant="success" className="px-3.5 py-1.5 text-sm"><BadgeCheck size={16} aria-hidden="true" /> Verification Status: Verified</Badge>
         ) : (
-          <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><ShieldAlert size={16} aria-hidden="true" /> Verification Status: Pending</Badge>
+          <>
+            <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><ShieldAlert size={16} aria-hidden="true" /> Verification Status: Pending</Badge>
+            <Link href="/verify">
+              <Button variant="outline" size="sm">Verify Aadhaar</Button>
+            </Link>
+          </>
         )}
         {user.aadhaarLastFour && <Badge variant="secondary" className="px-3.5 py-1.5 text-sm"><Landmark size={15} aria-hidden="true" /> Aadhaar ····{user.aadhaarLastFour}</Badge>}
         <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}><LogOut size={15} className="mr-1.5" aria-hidden="true" /> Sign out</Button>
