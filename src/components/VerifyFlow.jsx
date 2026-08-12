@@ -9,6 +9,7 @@ import {
   Fingerprint,
   Loader2,
   LogOut,
+  Mail,
   ShieldCheck,
   Smartphone,
 } from 'lucide-react'
@@ -38,8 +39,10 @@ export default function VerifyFlow() {
   const [step, setStep] = useState(1)
   const [aadhaar, setAadhaar] = useState('')
   const [mobile, setMobile] = useState('')
+  const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const [masked, setMasked] = useState('')
+  const [sentToEmail, setSentToEmail] = useState('')
   const [demoOtp, setDemoOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -58,16 +61,21 @@ export default function VerifyFlow() {
       setError(u('verifyInvalidMobile'))
       return
     }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setError(u('verifyInvalidEmail'))
+      return
+    }
     setLoading(true)
     try {
       const res = await fetch('/api/aadhaar/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aadhaar, mobile }),
+        body: JSON.stringify({ aadhaar, mobile, email }),
       })
        const data = await res.json()
        if (!res.ok) throw new Error(data.error)
        setMasked(data.maskedAadhaar)
+       setSentToEmail(data.sentTo || '')
        setDemoOtp(data.otp || '')
        setStep(2)
     } catch (err) {
@@ -178,6 +186,14 @@ export default function VerifyFlow() {
                   </div>
                 </div>
 
+                <div>
+                  <Label htmlFor="email">{u('verifyEmailLabel')}</Label>
+                  <div className="relative">
+                    <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
+                    <Input id="email" type="email" autoComplete="email" placeholder="you@gmail.com" className="pl-11 text-left" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                </div>
+
                 {error && <motion.p role="alert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl bg-red-500/10 px-4 py-2.5 text-xs font-medium text-red-600">{error}</motion.p>}
 
                 <Button type="submit" size="lg" className="w-full" disabled={loading}>
@@ -187,7 +203,7 @@ export default function VerifyFlow() {
               </motion.form>
             ) : (
               <motion.form key="otp" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }} transition={{ duration: 0.4, ease: EASE }} onSubmit={handleVerify} className="space-y-5">
-                <div className="rounded-2xl bg-neutral-50 px-4 py-3 text-center text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">{u('verifyOtpSentTo')} <span className="font-semibold text-neutral-950 dark:text-neutral-50">{masked}</span></div>
+                <div className="rounded-2xl bg-neutral-50 px-4 py-3 text-center text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">{u('verifyOtpSentTo')} <span className="font-semibold text-neutral-950 dark:text-neutral-50">{masked}</span>{sentToEmail && (<span> &nbsp;·&nbsp; {sentToEmail}</span>)}</div>
 
                 {demoOtp && (
                   <div className="rounded-2xl border border-dashed border-neutral-300 bg-white/60 px-4 py-3 text-center text-sm text-neutral-700 dark:border-white/20 dark:bg-white/5 dark:text-neutral-200">

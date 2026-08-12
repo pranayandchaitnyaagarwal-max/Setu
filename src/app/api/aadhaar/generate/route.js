@@ -17,7 +17,11 @@ export async function POST(req) {
   const body = await req.json()
   const aadhaar = String(body.aadhaar ?? '').replace(/\s+/g, '')
   const mobile = String(body.mobile ?? '').replace(/\s+/g, '')
-  const email = session?.user?.email || null
+  const emailFromBody = String(body.email ?? '').trim()
+  if (emailFromBody && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailFromBody)) {
+    return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+  }
+  const email = emailFromBody || session?.user?.email || null
 
   if (!/^\d{12}$/.test(aadhaar)) {
     return NextResponse.json({ error: 'Aadhaar number must be a valid 12-digit number.' }, { status: 400 })
@@ -49,6 +53,7 @@ export async function POST(req) {
         : 'OTP sent successfully via ' + channel + '.',
     channel,
     maskedAadhaar: `XXXX XXXX ${aadhaar.slice(-4)}`,
+    sentTo: channel !== 'demo' ? email : undefined,
     // Demo only: a real deployment SMS/emails this. Shown so the flow is testable.
     otp: channel === 'demo' ? otp : undefined,
   })

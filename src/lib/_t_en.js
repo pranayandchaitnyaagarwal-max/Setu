@@ -133,4 +133,6 @@ export const _en = {
   commonSubmit: 'Submit',
   commonCancel: 'Cancel',
   commonLoading: 'Loading…',
+  verifyEmailLabel: 'Email linked to this Aadhaar (OTP will be sent here)',
+  verifyInvalidEmail: 'Please enter a valid email address.',
 }

@@ -259,6 +259,7 @@ function GrievancePortal({ user }) {
 }
 
 function BenefitSummary({ user }) {
+  const { u } = useUi()
   const data = benefitData[user.email] || benefitData['sunita.verma@welfare.gov.in']
   return (
     <>
@@ -271,6 +272,7 @@ function BenefitSummary({ user }) {
 }
 
 export default function DashboardView() {
+  const { u } = useUi()
   const { data: session } = useSession()
   const user = session?.user || { email: 'sunita.verma@welfare.gov.in', name: 'Sunita Verma', image: 'https://i.pravatar.cc/150?u=sunita.verma@welfare.gov.in', isAadhaarVerified: true, aadhaarLastFour: '4821' }
   return (
