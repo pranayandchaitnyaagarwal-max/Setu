@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 export const metadata = {
   title: 'SETU — Precision Governance. Reimagined.',
   description: 'A secure digital platform for welfare policy implementation — dynamic registries, decentralized biometrics, and direct benefit transfers.',
+  icons: { icon: '/favicon.svg' },
 }
 
 const themeScript = `(function(){try{var t=localStorage.getItem('setu-theme');if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`

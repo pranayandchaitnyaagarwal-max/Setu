@@ -21,49 +21,73 @@ export async function POST(req) {
     return NextResponse.json({ error: 'OTP must be a 6-digit number.' }, { status: 400 })
   }
 
-  // Validate the OTP against the server-issued one (real verification).
+  // Recover the transaction id issued at OTP-generation time.
   const cookie = req.cookies.get('setu_otp')?.value
-  let valid = false
+  let txnId = null
   if (cookie) {
     try {
       const data = JSON.parse(Buffer.from(cookie, 'base64').toString())
-      if (data.a === aadhaar && data.o === otp && data.exp > Date.now()) valid = true
+      if (data.a === aadhaar && data.exp > Date.now()) txnId = data.txn
     } catch { }
   }
-  if (!valid) {
+  if (!txnId) {
+    return NextResponse.json({ error: 'Session expired. Please request a new OTP.' }, { status: 400 })
+  }
+
+  // Step 5: verify the OTP with the provider and fetch the e-KYC payload.
+  const { verifyOtp } = await import('@/lib/aadhaarProvider')
+  let prov
+  try {
+    prov = await verifyOtp({ aadhaar, otp, txnId })
+  } catch (e) {
+    return NextResponse.json({ error: 'Verification failed. ' + (e.message || '') }, { status: 502 })
+  }
+  if (!prov.success) {
     return NextResponse.json({ error: 'Invalid or expired OTP. Please request a new one.' }, { status: 400 })
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  const ekyc = prov.ekyc
 
-  const aadhaarLastFour = aadhaar.slice(-4)
+  // Step 6: compare e-KYC name against the signed-in account name.
+  const { compareNames } = await import('@/lib/verifyName')
+  const { score, match } = compareNames(ekyc.name, session.user.name)
 
-  // Persist verification to the database when configured (graceful).
-  try {
-    const { getPrisma } = await import('@/lib/prisma')
-    const p = getPrisma()
-    if (p && session.user.email) {
-      await p.user.upsert({
-        where: { email: session.user.email },
-        update: { isAadhaarVerified: true, aadhaarLastFour },
-        create: {
-          email: session.user.email,
-          name: session.user.name || 'Citizen User',
-          image: session.user.image || null,
-          isAadhaarVerified: true,
-          aadhaarLastFour,
-        },
-      })
-    }
-  } catch { }
-
-  await updateSession({ isAadhaarVerified: true, aadhaarLastFour })
-
-  const res = NextResponse.json({
+  const payload = {
     success: true,
-    message: 'Aadhaar verification successful.',
-    aadhaarLastFour: aadhaarLastFour,
-  })
+    verified: match,
+    ekycName: ekyc.name,
+    accountName: session.user.name,
+    score,
+    aadhaarLastFour: ekyc.lastFour,
+  }
+  if (!match) {
+    payload.message =
+      'The name on the Aadhaar e-KYC does not match your signed-in account. Verification failed.'
+  }
+
+  if (match) {
+    // Names matched -> mark Aadhaar as verified.
+    try {
+      const { getPrisma } = await import('@/lib/prisma')
+      const p = getPrisma()
+      if (p && session.user.email) {
+        await p.user.upsert({
+          where: { email: session.user.email },
+          update: { isAadhaarVerified: true, aadhaarLastFour: ekyc.lastFour },
+          create: {
+            email: session.user.email,
+            name: session.user.name || 'Citizen User',
+            image: session.user.image || null,
+            isAadhaarVerified: true,
+            aadhaarLastFour: ekyc.lastFour,
+          },
+        })
+      }
+    } catch { }
+    await updateSession({ isAadhaarVerified: true, aadhaarLastFour: ekyc.lastFour })
+  }
+
+  const res = NextResponse.json(payload)
   res.cookies.set('setu_otp', '', { maxAge: 0 })
   return res
 }

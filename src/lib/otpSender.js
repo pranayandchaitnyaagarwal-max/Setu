@@ -44,7 +44,7 @@ async function sendSms({ to, body }) {
   return true
 }
 
-async function sendEmail({ to, subject, text }) {
+export async function sendEmail({ to, subject, text }) {
   if (!nodemailer) {
     const mod = await import('nodemailer')
     nodemailer = mod.default

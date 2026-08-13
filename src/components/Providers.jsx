@@ -6,7 +6,7 @@ import { LanguageProvider } from '@/lib/language'
 
 export default function Providers({ children }) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
       <ThemeProvider>
         <LanguageProvider>{children}</LanguageProvider>
       </ThemeProvider>
