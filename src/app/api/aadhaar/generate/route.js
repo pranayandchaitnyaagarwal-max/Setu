@@ -43,6 +43,8 @@ export async function POST(req) {
     success: true,
     delivery: result.delivery,
     sentTo: result.sentTo,
+    maskedAadhaar: 'XXXX XXXX ' + aadhaar.slice(-4),
+    otp: result.otp || null,
     message,
   }
 

@@ -49,7 +49,7 @@ export async function initiateOtp({ aadhaar, email }) {
     delivery = 'email'
     sentTo = email
   }
-  return { txnId, delivery, sentTo }
+  return { txnId, delivery, sentTo, otp: PROVIDER === 'mock' ? otp : undefined }
 }
 
 export async function verifyOtp({ aadhaar, otp, txnId }) {

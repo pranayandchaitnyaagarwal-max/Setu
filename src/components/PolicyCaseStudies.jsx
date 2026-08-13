@@ -14,7 +14,6 @@ const cases = [
   {
     n: '01',
     icon: Scale,
-    image: '/policy/census-gap.svg',
     badge: 'Coverage Exclusion',
     title: 'The 2011 Census Gap',
     issue:
@@ -28,7 +27,6 @@ const cases = [
   {
     n: '02',
     icon: Fingerprint,
-    image: '/policy/biometric-failure.svg',
     badge: 'Authentication Failures',
     title: 'Manual Labor & Biometric Failures',
     issue:
@@ -42,7 +40,6 @@ const cases = [
   {
     n: '03',
     icon: ShieldCheck,
-    image: '/policy/dbt-leakage.svg',
     badge: 'Leakage Prevention',
     title: '"Ghost Beneficiaries" & DBT Savings',
     issue:
@@ -56,7 +53,6 @@ const cases = [
   {
     n: '04',
     icon: Bot,
-    image: '/policy/ai-grievance.svg',
     badge: 'CPGRAMS 7.0',
     title: 'AI-Driven Grievance Routing',
     issue:
@@ -70,7 +66,6 @@ const cases = [
   {
     n: '05',
     icon: MapPin,
-    image: '/policy/social-audit.svg',
     badge: 'Meghalaya Model',
     title: 'Social Audits: The Community Model',
     issue:
@@ -117,10 +112,9 @@ export default function PolicyCaseStudies() {
           </motion.p>
         </motion.div>
 
-        <div className="mt-16 flex flex-col gap-12 lg:gap-20">
+        <div className="mt-16 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {cases.map((c, i) => {
             const Icon = c.icon
-            const reversed = i % 2 === 1
             return (
               <motion.article
                 key={c.n}
@@ -128,60 +122,47 @@ export default function PolicyCaseStudies() {
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true, amount: 0.2 }}
-                className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-16"
+                className="relative flex flex-col rounded-[2rem] border border-neutral-100 bg-neutral-50 p-7 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-8"
               >
-                <div className={reversed ? 'lg:order-2' : 'lg:order-1'}>
-                  <div className="relative overflow-hidden rounded-[2rem] border border-neutral-100 bg-neutral-50 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-8">
-                    <img
-                      src={c.image}
-                      alt={c.title}
-                      className="h-auto w-full select-none"
-                      loading="lazy"
-                    />
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+                    <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
                   </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
+                    {c.badge}
+                  </span>
+                  <span className="ml-auto font-mono text-sm font-semibold text-neutral-300 dark:text-neutral-600">
+                    {c.n}
+                  </span>
                 </div>
 
-                <div className={reversed ? 'lg:order-1' : 'lg:order-2'}>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
-                      <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                <h3 className="mt-5 text-2xl font-bold tracking-tight sm:text-3xl dark:text-white">
+                  {c.title}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+                  {c.issue}
+                </p>
+                <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+                  <span className="font-semibold text-neutral-900 dark:text-white">Impact: </span>
+                  {c.impact}
+                </p>
+
+                <dl className="mt-6 space-y-3 border-t border-neutral-100 pt-5 dark:border-white/10">
+                  <div className="flex gap-3">
+                    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-[11px] font-bold text-red-600">!</span>
+                    <div>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-red-600/80 dark:text-red-400/80">Problem</dt>
+                      <dd className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">{c.problem}</dd>
                     </div>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
-                      {c.badge}
-                    </span>
-                    <span className="ml-auto font-mono text-sm font-semibold text-neutral-300 dark:text-neutral-600">
-                      {c.n}
-                    </span>
                   </div>
-
-                  <h3 className="mt-5 text-2xl font-bold tracking-tight sm:text-3xl dark:text-white">
-                    {c.title}
-                  </h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
-                    {c.issue}
-                  </p>
-                  <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
-                    <span className="font-semibold text-neutral-900 dark:text-white">Impact: </span>
-                    {c.impact}
-                  </p>
-
-                  <dl className="mt-6 space-y-3 border-t border-neutral-100 pt-5 dark:border-white/10">
-                    <div className="flex gap-3">
-                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-[11px] font-bold text-red-600">!</span>
-                      <div>
-                        <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-red-600/80 dark:text-red-400/80">Problem</dt>
-                        <dd className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">{c.problem}</dd>
-                      </div>
+                  <div className="flex gap-3">
+                    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/10 text-[11px] font-bold text-green-600">✓</span>
+                    <div>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-green-600/80 dark:text-green-400/80">Solution</dt>
+                      <dd className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">{c.solution}</dd>
                     </div>
-                    <div className="flex gap-3">
-                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/10 text-[11px] font-bold text-green-600">✓</span>
-                      <div>
-                        <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-green-600/80 dark:text-green-400/80">Solution</dt>
-                        <dd className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">{c.solution}</dd>
-                      </div>
-                    </div>
-                  </dl>
-                </div>
+                  </div>
+                </dl>
               </motion.article>
             )
           })}
