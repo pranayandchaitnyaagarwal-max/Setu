@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { SEED_GRIEVANCES } from '@/lib/grievances'
 import { INDIAN_STATES, DISTRICTS_BY_STATE } from '@/lib/india'
+import { analyzeOfficialEmail } from '@/lib/identity'
 
 const ADMIN_PASSWORD = 'SETU-ADMIN-2026'
 
@@ -90,11 +91,20 @@ function RegistrationForm({ onComplete }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', position: POSITIONS[0], district: DISTRICTS[0], state: 'Maharashtra' })
   const [err, setErr] = useState('')
   const { u } = useUi()
+  const emailVerdict = useMemo(() => analyzeOfficialEmail(form.email), [form.email])
   const submit = (e) => {
     e.preventDefault()
     setErr('')
-    if (!form.name.trim() || !/^\S+@\S+\.\S+$/.test(form.email) || !/^\d{10}$/.test(form.phone.replace(/\D/g, ''))) {
-      setErr('Please enter a valid name, email, and 10-digit phone number.')
+    if (!form.name.trim()) {
+      setErr('Please enter your full name.')
+      return
+    }
+    if (!emailVerdict.isReal) {
+      setErr(emailVerdict.message || 'Please use a valid official government email.')
+      return
+    }
+    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ''))) {
+      setErr('Please enter a valid 10-digit phone number.')
       return
     }
     onComplete({ ...form, phone: form.phone.replace(/\D/g, '').slice(0, 10) })
@@ -115,7 +125,33 @@ function RegistrationForm({ onComplete }) {
               </div>
               <div>
                 <Label htmlFor="off-email">{u('adminEmail')}</Label>
-                <Input id="off-email" type="email" placeholder="name@gov.in" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <Input
+                  id="off-email"
+                  type="email"
+                  placeholder="name@gov.in"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className={
+                    form.email
+                      ? emailVerdict.level === 'ok'
+                        ? 'border-green-400 dark:border-green-500/50'
+                        : 'border-red-400 dark:border-red-500/50'
+                      : ''
+                  }
+                />
+                {form.email && (
+                  <p
+                    className={
+                      'mt-1.5 text-xs font-medium ' +
+                      (emailVerdict.level === 'ok'
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-red-600 dark:text-red-400')
+                    }
+                  >
+                    {emailVerdict.level === 'ok' ? '✓ ' : '⚠ '}
+                    {emailVerdict.message}
+                  </p>
+                )}
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -287,6 +323,11 @@ function Dashboard({ official }) {
           <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             {official.name} · {official.position} · {official.district}, {official.state}
           </p>
+          <div className="mt-2">
+            <Badge variant={analyzeOfficialEmail(official.email).isReal ? 'success' : 'secondary'}>
+              {analyzeOfficialEmail(official.email).isReal ? 'Government ID Verified' : official.email}
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {!scoped && (
