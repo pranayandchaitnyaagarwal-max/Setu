@@ -19,9 +19,8 @@ export default function VoiceInput({ speechLang = 'en-IN', onResult, className =
     }
   }, [])
 
-  if (!supported) return null
-
   const start = () => {
+    if (!supported) return
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition
     const rec = new SR()
     rec.lang = speechLang

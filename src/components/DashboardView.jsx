@@ -15,6 +15,7 @@ import {
   LogOut,
   MapPin,
   ShieldAlert,
+  User,
   Users,
   Wallet,
   Globe,
@@ -26,6 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import VoiceInput from '@/components/VoiceInput'
 import { issueTypes } from '@/lib/translations'
 import { useLanguage } from '@/lib/language'
 import { useUi } from '@/lib/ui'
@@ -109,6 +111,7 @@ function BenefitCard({ title, icon: Icon, value, status, scheme, statusColor = '
 
 function GrievancePortal({ user }) {
   const { t } = useLanguage()
+  const { speechLang } = useUi()
   const [form, setForm] = useState({ name: '', welfareId: '', issue: '', district: '', state: '' })
   const [coords, setCoords] = useState(null)
   const [locating, setLocating] = useState(false)
@@ -196,10 +199,16 @@ function GrievancePortal({ user }) {
       ) : (
         <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.98 }} onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="citizen-name">{t.name}</Label>
-              <Input id="citizen-name" type="text" autoComplete="name" placeholder={t.placeholderName} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        <div>
+          <Label htmlFor="citizen-name">{t.name}</Label>
+          <div className="relative">
+            <User size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" aria-hidden="true" />
+            <Input id="citizen-name" type="text" autoComplete="name" placeholder={t.placeholderName} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+              <VoiceInput speechLang={speechLang} onResult={(txt) => setForm({ ...form, name: txt })} />
             </div>
+          </div>
+        </div>
             <div>
               <Label htmlFor="welfare-id">{t.welfareId}</Label>
               <Input id="welfare-id" type="text" autoComplete="off" placeholder={t.placeholderWelfareId} value={form.welfareId} onChange={(e) => setForm({ ...form, welfareId: formatWelfareId(e.target.value) })} />
