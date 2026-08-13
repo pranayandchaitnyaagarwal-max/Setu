@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="POS biometric authentication failures">
+  <rect width="480" height="360" rx="24" fill="#f8fafc"/>
+  <rect x="40" y="40" width="400" height="280" rx="18" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="64" y="80" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#0f172a">POS biometric failures</text>
+  <text x="64" y="102" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#64748b">Worn fingerprints · low connectivity</text>
+  <g transform="translate(150,210)" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round">
+    <path d="M-46 26 a46 46 0 1 1 92 0"/>
+    <path d="M-32 26 a32 32 0 1 1 64 0"/>
+    <path d="M-18 26 a18 18 0 1 1 36 0" stroke-dasharray="4 10"/>
+    <path d="M2 -2 a16 16 0 0 1 -2 34"/>
+  </g>
+  <circle cx="262" cy="168" r="34" fill="#fef3c7"/>
+  <path d="M262 150 l7 20 h-14 z" fill="#f59e0b"/>
+  <text x="262" y="198" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="800" fill="#b45309">!</text>
+  <rect x="298" y="206" width="120" height="84" rx="12" fill="#1e293b"/>
+  <rect x="310" y="218" width="96" height="30" rx="6" fill="#38bdf8"/>
+  <circle cx="372" cy="172" r="6" fill="#ef4444"/>
+  <text x="172" y="300" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#ef4444">10–15% fail rate</text>
+  <text x="358" y="300" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#0f172a">Fair Price Shop</text>
+</svg>
