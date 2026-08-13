@@ -10,23 +10,14 @@
 // We deliberately verify against the PINNED UIDAI cert (not the certificate
 // embedded in the file) so a tampered/forged file cannot pass verification.
 
-import { readFileSync, existsSync } from 'fs'
-import { join } from 'path'
 import { SignedXml } from 'xml-crypto'
 import { XMLParser } from 'fast-xml-parser'
+import { UIDAI_OFFLINE_PUBLIC_KEY } from './uidaiKey'
 
-function loadPublicKey() {
-  const candidates = [
-    join(process.cwd(), 'src/lib/uidai-offline-publickey.pem'),
-    join(process.cwd(), 'uidai-offline-publickey.pem'),
-  ]
-  for (const p of candidates) {
-    if (existsSync(p)) return readFileSync(p, 'utf8')
-  }
-  throw new Error('UIDAI offline public key certificate not found. Place uidai-offline-publickey.pem in src/lib/.')
-}
-
-const PUBLIC_KEY_PEM = loadPublicKey()
+// UIDAI Offline e-KYC public key ("DS Unique Identification Authority of
+// India 06"), valid 2026-02-03 → 2029-02-03. Generated from the official
+// uidai-offline-publickey.pem so it is always available in serverless.
+const PUBLIC_KEY_PEM = UIDAI_OFFLINE_PUBLIC_KEY
 
 // Forward-compatible field names across UIDAI schema versions.
 const ADDRESS_FIELDS = ['co', 'house', 'street', 'lm', 'loc', 'vtc', 'po', 'subdist', 'dist', 'state', 'pc', 'country']
